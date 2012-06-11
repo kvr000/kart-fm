@@ -1,0 +1,25 @@
+#!/usr/bin/perl
+
+%pnmsup = (
+	"jpeg" => "jpeg",
+	"jpg" => "jpeg",
+	"png" => "png",
+);
+
+$p = $ARGV[0];
+
+while (<STDIN>) {
+	print, next if (!m/^::\s*(.*?)\s*$/);
+	foreach $f (split(/\s+/, $1)) {
+		my $pnms;
+		my $s = $f;
+		$s =~ s/^(.*)\.([^.]*)/$1_pre.$2/;
+		if (!defined($pnms = $pnmsup{$2})) {
+			print(STDERR "unknown extension: $f, ignoring...\n");
+			next;
+		}
+		system("${pnms}topnm < $f | pnmscale -ysize 96 | pnmto${pnms} > $s");
+		print("<a href=\"$p$f\"><img src=\"$p$s\" alt=photo></a>\n");
+	}
+	#print("<br/>\n");
+}

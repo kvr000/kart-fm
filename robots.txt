@@ -1,0 +1,9 @@
+# http://kart-fm.motokary.net
+
+# All robots will spider the domain
+User-agent: *
+Disallow: 
+
+# Disallow directory forum.php
+User-agent: *
+Disallow: forum.php

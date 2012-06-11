@@ -1,0 +1,69 @@
+#!/usr/bin/perl -w
+
+%tm_syn = ();
+%dr_syn = ();
+
+if (defined $ENV{'NAME_SYN'}) {
+	die "failed to do $ENV{'NAME_SYN'}\n" if (!do $ENV{'NAME_SYN'});
+}
+
+sub pow
+{
+	my ($b, $p) = @_;
+	return exp($p*log($b));
+}
+
+die "failed to open _info\n" if (!open(I, "<_info"));
+
+die "failed to read driver_cnt\n" if (<I> !~ m/^\s*(\d*)\s/);
+
+$dr_cnt = $1;
+
+close(I);
+
+$l_add = 50.0/($dr_cnt-1);
+$q_coef = pow(50.0, 1.0/($dr_cnt-1));
+
+%teams = ();
+
+for ($i = 0; $i < $dr_cnt; $i++) {
+	my $ri = $dr_cnt-1-$i;
+	my $sc = $l_add*$ri+pow($q_coef, $ri);
+	my $a;
+	die "failed to open ".sprintf("%02d", $i+1).".racer\n" if (!open(D, "<".sprintf("%02d", $i+1).".racer"));
+	chomp($d = <D>);
+	chomp($t = <D>);
+	close(D);
+	$d = $dr_syn{$d} if (defined $dr_syn{$d});
+	$t = $tm_syn{$t} if (defined $tm_syn{$t});
+	$teams{$t} = [] if (!defined $teams{$t});
+	$a = $teams{$t};
+	push(@$a, $sc);
+	#printf("%2d: %7.3f\t%s (%s)\n", $i, $sc, $d, $t);
+	printf("%s: %7.3f\n", $d, $sc);
+}
+
+print("\n");
+
+@tsl = ();
+
+foreach $t (keys %teams) {
+	my $i;
+	my $sc = 0;
+	my $a = $teams{$t};
+	my $ts = {};
+	for ($i = 0; $i < 2 && $i <= $#$a; $i++) {
+		$sc += $$a[$i];
+	}
+	$ts->{'t'} = $t;
+	$ts->{'sc'} = $sc;
+	push(@tsl, $ts);
+	#printf("%s: %7.3f\n", $t, $sc);
+}
+
+foreach $ts (sort { $b->{'sc'} <=> $a->{'sc'} } @tsl) {
+	next if ($ts->{'t'} eq "? - ?");
+	printf("%s: %7.3f\n", $ts->{'t'}, $ts->{'sc'});
+}
+
+print("\n");

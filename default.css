@@ -1,0 +1,64 @@
+table.lmenu
+{
+	background:	#cc0000;
+	color:		#ffffff;
+	font-weight:	700;
+	#font-size:	15;
+	border:		3px solid #cc8050;
+	padding-top:	5px;
+	padding-bottom:	5px;
+}
+
+tr.mtitle
+{
+	background:	#ffffff;
+	color:		#cc0000;
+}
+
+a.lmenu
+{
+	color:		#ffffff;
+	font-weight:	700;
+}
+
+div.mtitle
+{
+	background:	#ffffff;
+	color:		#cc0000;
+}
+
+font.mtitle
+{
+	font-size:	 25px
+}
+
+div.lother
+{
+	background:	#cdf79c;
+}
+
+table.lother
+{
+	background:	#cdf79c;
+}
+
+tr.lother
+{
+	background:	#cdf79c;
+}
+
+p.lother
+{
+	background:	#cdefd7;
+}
+
+p.lmenu
+{
+	background:	#cc0000;
+	font-weight:	700;
+}
+
+img
+{
+	border:		0
+}

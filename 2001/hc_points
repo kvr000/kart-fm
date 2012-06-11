@@ -1,0 +1,27 @@
+#!/bin/bash
+
+export NAME_SYN=`pwd`/name_syn
+export TM_RDR=2
+
+p=0
+l=
+for r in 01 02 03 04 05; do
+	let p++
+	l="$l $r"
+
+	(
+		echo "Závod"
+		../utils/c_total $r |../utils/hconv_score
+		echo
+
+		echo "Celkové pořadí bez škrtání"
+		../utils/c_total $l |../utils/hconv_score
+		echo
+
+		if [ $p -gt 3 ]; then
+			echo "Celkové pořadí se škrtáním"
+			DR_MAX=3 TM_MAX=666 ../utils/c_total $l |../utils/hconv_score
+			echo
+		fi
+	) >$r/_rpoints.html
+done

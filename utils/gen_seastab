@@ -1,0 +1,36 @@
+#!/usr/bin/perl -w
+
+require (($0 =~ m@^(.*?)[^/]*$@)[0]."sc_parser.pm");
+
+%dr_syn = ();
+%tm_syn = ();
+
+if (defined $ENV{'NAME_SYN'}) {
+	die "failed to do $ENV{'NAME_SYN'}\n" if (!do $ENV{'NAME_SYN'});
+}
+
+$dr_max = (defined $ENV{'DR_MAX'})?$ENV{'DR_MAX'}:0x7fff;
+#$tm_max = (defined $ENV{'TM_MAX'})?$ENV{'TM_MAX'}:0x7fff;
+#$tm_rdr = (defined $ENV{'TM_RDR'})?$ENV{'TM_RDR'}:0x1fff;
+
+$sc_parser = new sc_parser;
+$sc_parser->set_name_syns(\%dr_syn, \%tm_syn);
+die "parse_scores failed: $@" if (!$sc_parser->parse_scores(@ARGV));
+
+foreach $dd ($sc_parser->sort_drivers($dr_max)) {
+
+	printf("<tr><td>%s</td>", $dd->{'name'});
+
+	foreach $r (@ARGV) {
+		if (!defined $dd->{'rac'}->{$r}) {
+			print("<td>-</td>");
+		}
+		elsif ($dd->{'rac'}->{$r}->{'u'}) {
+			printf("<td>%d (%.3f)</td>", $dd->{'rac'}->{$r}->{'l'}, $dd->{'rac'}->{$r}->{'p'});
+		}
+		else {
+			printf("<td><s>%d (%.3f)</s></td>", $dd->{'rac'}->{$r}->{'l'}, $dd->{'rac'}->{$r}->{'p'});
+		}
+	}
+	printf("<td align=right>%.3f</td><td align=right>%.3f</td><td align=right>%.3f</td></tr>\n", $dd->{'totc'}, $dd->{'totr'}, $dd->{'totc'}+$dd->{'totr'});
+}

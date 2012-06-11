@@ -1,0 +1,47 @@
+#!/usr/bin/perl -w
+
+%tm_syn = ();
+%dr_syn = ();
+
+if (defined $ENV{'NAME_SYN'}) {
+	die "failed to do $ENV{'NAME_SYN'}\n" if (!do $ENV{'NAME_SYN'});
+}
+
+@head_list = ( "Závod", "Celkové pořadí bez škrtání", "Celkové pořadí se škrtáním" );
+
+do {
+	$p = 0;
+	while (<>) {
+		my $d;
+		last if ($_ =~ /^\s*$/);
+		if ($p == 0) {
+			printf("<h2>%s</h2>\n\n", shift(@head_list));
+			print("<table border=1>\n");
+			print("<tr><th>Pozice</th><th>Jezdec</th><th>Body</th></tr>\n");
+		}
+		die "name:score match failed on line $_\n" if ($_ !~ /^\s*(.*?)\s*:\s*(.*?)\s*$/);
+		$d = $1; $d = $dr_syn{$d} if (defined $dr_syn{$d});
+		printf("<tr><td align=right>%d</td><td align=left>%s</td><td align=right>%s</td></tr>\n", ++$p, $d, $2);
+	}
+	if ($p != 0) {
+		print("</table>\n");
+		print("\n");
+	}
+
+	$p = 0;
+	while (<>) {
+		my $t;
+		last if ($_ =~ /^\s*$/);
+		if ($p == 0) {
+			print("<table border=1>\n");
+			print("<tr><th>Pozice</th><th>Tým</th><th>Body</th></tr>\n");
+		}
+		die "name:score match failed on line $_\n" if ($_ !~ /^\s*(.*?)\s*:\s*(.*?)\s*$/);
+		$t = $1; $t = $tm_syn{$t} if (defined $tm_syn{$t});
+		printf("<tr><td align=right>%d</td><td align=left>%s</td><td align=right>%s</td></tr>\n", ++$p, $t, $2);
+	}
+	if ($p != 0) {
+		print("</table>\n");
+		print("\n");
+	}
+} while ((defined $_) && $_ ne "");

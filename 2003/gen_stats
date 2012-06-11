@@ -1,0 +1,39 @@
+#!/bin/sh
+
+export NAME_SYN=name_syn
+export TM_RDR=2
+export cnt_max=2
+
+rlist=`cat rlist`
+
+(
+	echo "<h2>Celkové pořadí se škrtáním (oficiální)</h2>"
+	DR_MAX=$cnt_max ../utils/c_total `echo $rlist` | ../utils/hconv_score
+	echo
+
+	echo "<h2>Celkové pořadí bez škrtání</h2>"
+	../utils/c_total `echo $rlist` | ../utils/hconv_score
+	echo
+
+	echo "<h2>Umístění v závodech</h2>"
+	echo "<table border=1>"
+	echo "<tr><th>Jezdec</th><th><a href=\"redir/race.php?season=2003&amp;race=01\">Džbán, 26. 04. 2003</a></th><th><a href=\"redir/race.php?season=2003&amp;race=02\">Břeclav, 27. 06. 2003</a></th><th><a href=\"redir/race.php?season=2003&amp;race=03\">Modřice, 08. 08. 2003</th><th>Body se škrtáním</th><th>Škrtnuto</th><th>Body celkem</th></tr>"
+	DR_MAX=$cnt_max ../utils/gen_seastab `echo $rlist`
+	echo "</table>"
+	echo
+
+	cat<<_TAIL_
+<h2>Pole positions</h2>
+<table border=1>
+<tr><td>Jima</td><td>2</td></tr>
+<tr><td>Krysa von Ratteburg</td><td>1</td></tr>
+</table>
+
+<h2>Nejrychlejší kola</h2>
+<table border=1>
+<tr><td>Krysa von Ratteburg</td><td>2</td></tr>
+</table>
+(nejrychlejší kolo z Břeclavi není kvůli absenci časomíry známo)
+_TAIL_
+
+) > stats.html

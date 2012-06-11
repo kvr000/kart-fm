@@ -1,0 +1,23 @@
+<h2>Bodování</h2>
+
+<h3>Bodování závodu</h3>
+<p>Vítěz každého závodu dostává 100 bodů, poslední jezdec přesně jeden bod.
+Body ostatních se počítají podle funkce tvořené z jedné poloviny lineární a
+z druhé exponencionální:<br>
+50.0*(N-P)/(N-1)+50.0<sup>(N-P)/(N-1)</sup><br>
+kde N je počet jezdců a P pozice konkrétního jezdce (od 1 do N). Body jsou
+u každého jednotlivce zaokrouhleny na 3 desetinná místa, tedy ještě před
+celkovým součtem pro sezónu, či jen pro soutěž týmů.</p>
+
+<h3>Bodování jednotlivců</h3>
+<p>Pro soutěž jednotlivců se počítají 2/3 nejlepších (podle bodování)
+závodů, v této sezóně tedy 3 závody. V případě rovnosti bodů rozhodují body
+ve zbylých závodech, dále pak počet nejlepších umístění, druhých
+nejlepších, ... a nakonec jednoznačně závod, ve kterém bylo nejlepšího
+umístění dosaženo (dřívější vyhrává).</p>
+
+<h3>Bodování týmů</h3>
+<p>Z každého závodu se pro tým počítají dva nejlepší výsledky. V případě
+rovnosti rozhoduje počet nejlepších umístění jednotlivých jezdců, druhých
+nejlepších atd. a nakonec opět závod, ve kterém bylo nejlepšího umístění
+dosaženo.</p>

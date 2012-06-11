@@ -1,0 +1,28 @@
+#!/bin/bash
+
+export NAME_SYN=`pwd`/name_syn
+export TM_RDR=2
+export cnt_max=2
+
+p=0
+l=
+for r in `cat rlist`; do
+	let p++
+	l="$l $r"
+
+	(
+		echo "<h2>Závod</h2>"
+		../utils/c_total $r |../utils/hconv_score
+		echo
+
+		echo "<h2>Celkové pořadí bez škrtání</h2>"
+		../utils/c_total $l |../utils/hconv_score
+		echo
+
+		if [ $p -gt $cnt_max ]; then
+			echo "<h2>Celkové pořadí se škrtáním</h2>"
+			DR_MAX=$cnt_max TM_MAX=666 ../utils/c_total $l |../utils/hconv_score
+			echo
+		fi
+	) >$r/_rpoints.html
+done

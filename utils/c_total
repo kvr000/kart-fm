@@ -1,0 +1,82 @@
+#!/usr/bin/perl -w
+
+%tm_syn = ();
+%dr_syn = ();
+
+if (defined $ENV{'NAME_SYN'}) {
+	die "failed to do $ENV{'NAME_SYN'}\n" if (!do $ENV{'NAME_SYN'});
+}
+
+$d_cut = (defined $ENV{'C_DC'})?$ENV{'C_DC'}:0;
+$t_cut = (defined $ENV{'C_TC'})?$ENV{'C_TC'}:0;
+$r_cnt = 0;
+
+%dl = ();
+%tl = ();
+
+foreach $r (@ARGV) {
+	$r_cnt++;
+	die "open $r/score\n" if (!open(SF, "<$r/score"));
+
+	# drivers
+	while (defined($l = <SF>) && (chomp($l), $l ne "")) {
+		my $d;
+		die "line $l doesn't match driver-line\n" if ($l !~ /^\s*(.*?)\s*:\s+(.*?)\s*$/);
+		$d = $1; $d = $dr_syn{$d} if (defined $dr_syn{$d});
+		$dl{$d} = [] if (!defined $dl{$d});
+		$a = $dl{$d};
+		push(@$a, $2);
+	}
+
+	# teams
+	while (defined($l = <SF>) && (chomp($l), $l ne "")) {
+		my $t;
+		die "line $l doesn't match team-line\n" if ($l !~ /^\s*(.*?)\s*:\s+(.*?)\s*$/);
+		$t = $1; $t = $tm_syn{$t} if (defined $tm_syn{$t});
+		$tl{$t} = [] if (!defined $tl{$t});
+		$a = $tl{$t};
+		push(@$a, $2);
+	}
+}
+
+@da = ();
+@ta = ();
+
+foreach $d (keys %dl) {
+	my $dd = {};
+	my $f = $dl{$d};
+
+	$dd->{'n'} = $d;
+	$dd->{'sc'} = 0;
+
+	@$f = sort { $b <=> $a } @$f;
+	splice(@$f, $r_cnt-$d_cut) if ($#$f+1 > $r_cnt-$d_cut);
+	foreach $s (@$f) {
+		$dd->{'sc'} += $s;
+	}
+	push(@da, $dd);
+}
+
+foreach $t (keys %tl) {
+	my $td = {};
+	my $f = $tl{$t};
+
+	$td->{'n'} = $t;
+	$td->{'sc'} = 0;
+
+	@$f = sort { $b <=> $a } @$f;
+	splice(@$f, $r_cnt-$t_cut) if ($#$f+1 > $r_cnt-$t_cut);
+	foreach $s (@$f) {
+		$td->{'sc'} += $s;
+	}
+	push(@ta, $td);
+}
+
+foreach $dd (sort { $b->{'sc'} <=> $a->{'sc'} } @da) {
+	printf("%s: %9.3f\n", $dd->{'n'}, $dd->{'sc'});
+}
+print("\n");
+foreach $td (sort { $b->{'sc'} <=> $a->{'sc'} } @ta) {
+	printf("%s: %9.3f\n", $td->{'n'}, $td->{'sc'});
+}
+print("\n");

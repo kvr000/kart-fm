@@ -1,0 +1,9 @@
+#!/usr/bin/perl
+
+%dr_syn = (
+	"Krysa von Rattenburg" => "Krysa von Ratteburg",
+);
+
+%tm_syn = (
+	"Hornets - MetroTec" => "Hornets - Metrotec",
+);
